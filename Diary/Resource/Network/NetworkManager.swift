@@ -10,7 +10,7 @@ import Foundation
 struct NetworkManager {
     public static let publicNetworkManager = NetworkManager()
     
-    func getJSONData<T: Codable>(endpoint: WeatherEndpoint,
+    func getJSONData<T: Decodable>(endpoint: WeatherEndpoint,
                                  type: T.Type,
                                  completion: @escaping (Result<T, NetworkError>) -> Void) {
         HTTPManager().requestGet(endpoint: endpoint) { result in
