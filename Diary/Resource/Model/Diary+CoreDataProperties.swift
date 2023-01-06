@@ -19,4 +19,6 @@ extension Diary {
     @NSManaged public var createdAt: Date?
     @NSManaged public var id: UUID?
     @NSManaged public var title: String?
+    @NSManaged public var weatherMain: String?
+    @NSManaged public var weatherIcon: String?
 }
