@@ -10,11 +10,13 @@ import Foundation
 struct NetworkManager {
     public static let publicNetworkManager = NetworkManager()
     
-    func getJSONData<T: Codable>(url: String, type: T.Type, completion: @escaping (Result<T, NetworkError>) -> Void) {
-        HTTPManager.shared.requestGet(url: url) { result in
+    func getJSONData<T: Codable>(endpoint: WeatherEndpoint,
+                                 type: T.Type,
+                                 completion: @escaping (Result<T, NetworkError>) -> Void) {
+        HTTPManager().requestGet(endpoint: endpoint) { result in
             switch result {
             case .success(let data):
-                guard let data: T = JSONConverter.shared.decodeData(data: data) else {
+                guard let data: T = JSONConverter().decodeData(data: data) else {
                     completion(.failure(.missingData))
                     return
                 }

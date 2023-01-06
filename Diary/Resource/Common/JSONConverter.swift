@@ -8,8 +8,6 @@
 import Foundation
 
 final class JSONConverter {
-    static let shared = JSONConverter()
-    
     func decodeData<T: Codable>(data: Data) -> T? {
         do {
             let result = try JSONDecoder().decode(T.self, from: data)

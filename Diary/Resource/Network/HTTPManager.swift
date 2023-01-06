@@ -8,8 +8,6 @@
 import Foundation
 
 final class HTTPManager {
-    static let shared = HTTPManager()
-    
     func requestToServer(with urlRequest: URLRequest,
                          completion: @escaping (Result<Data, NetworkError>) -> Void) {
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
