@@ -10,14 +10,16 @@ import Foundation
 final class HTTPManager {
     static let shared = HTTPManager()
     
-    func requestToServer(with urlRequest: URLRequest, completion: @escaping (Result<Data, NetworkError>) -> Void) {
+    func requestToServer(with urlRequest: URLRequest,
+                         completion: @escaping (Result<Data, NetworkError>) -> Void) {
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             guard let data = data else {
                 completion(.failure(.clientError))
                 return
             }
             
-            guard let response = urlResponse as? HTTPURLResponse, (200..<300).contains(response.statusCode) else {
+            guard let response = urlResponse as? HTTPURLResponse,
+                  (200..<300).contains(response.statusCode) else {
                 if let response = urlResponse as? HTTPURLResponse {
                     print(response.statusCode)
                 }
@@ -33,14 +35,12 @@ final class HTTPManager {
         }.resume()
     }
     
-    func requestGet(url: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        guard let validURL = URL(string: url) else {
+    func requestGet(endpoint: WeatherEndpoint,
+                    completion: @escaping (Result<Data, NetworkError>) -> Void) {
+        guard let urlRequest = endpoint.createURLRequest() else {
             completion(.failure(.clientError))
             return
         }
-        
-        var urlRequest = URLRequest(url: validURL)
-        urlRequest.httpMethod = HTTPMethod.get
         
         requestToServer(with: urlRequest, completion: completion)
     }
