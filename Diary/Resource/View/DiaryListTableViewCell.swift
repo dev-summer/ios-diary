@@ -98,6 +98,7 @@ final class DiaryListTableViewCell: UITableViewCell {
         diaryTitleLabel.text = data.title
         createdDateLabel.text = DateFormatterManager().formatDate(data.createdAt)
         previewLabel.text = data.body
+        configureItemImage(icon: data.iconName)
     }
     
     private enum LayoutConstant {

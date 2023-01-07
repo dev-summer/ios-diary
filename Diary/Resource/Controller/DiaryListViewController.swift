@@ -11,21 +11,9 @@ import CoreLocation
 final class DiaryListViewController: UIViewController {
     private var diaryItemManager = DiaryItemManager()
     private let alertManager = AlertManager()
-    private let locationmanager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.requestWhenInUseAuthorization()
-        manager.desiredAccuracy = kCLLocationAccuracyReduced
-        return manager
-    }()
     
     private let diaryListTableView = UITableView()
     private var diaryItems: [DiaryModel] = [] {
-        didSet {
-            diaryListTableView.reloadData()
-        }
-    }
-    
-    private var weatherData: [WeatherInformation] = [] {
         didSet {
             diaryListTableView.reloadData()
         }
@@ -37,8 +25,6 @@ final class DiaryListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationmanager.delegate = self
-        locationmanager.requestLocation()
         configureNavigationBar()
         configureDiaryListTableView()
     }
@@ -101,9 +87,7 @@ extension DiaryListViewController: UITableViewDataSource {
         ) as? DiaryListTableViewCell else { return UITableViewCell() }
         
         cell.updateContent(data: diaryItems[indexPath.row])
-        cell.accessoryType = .disclosureIndicator
-        cell.configureItemImage(icon: "10d")
-        
+        cell.accessoryType = .disclosureIndicator        
         return cell
     }
 }
@@ -152,24 +136,4 @@ extension DiaryListViewController: AlertDelegate {
     }
 }
 
-extension DiaryListViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let coordinate = locations.last?.coordinate {
-            manager.stopUpdatingLocation()
-            let endpoint = WeatherEndpoint.fetchWeatherInformation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            NetworkManager.publicNetworkManager.getJSONData(endpoint: endpoint, type: WeatherInformation.self) { result in
-                switch result {
-                case .success(let weatherData):
-                    self.weatherData.append(weatherData)
-                    return
-                case .failure(_):
-                    return
-                }
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        showErrorAlert(title: "위치 정보 불러오기 실패")
-    }
-}
+

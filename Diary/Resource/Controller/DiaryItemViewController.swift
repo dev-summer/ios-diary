@@ -6,11 +6,18 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class DiaryItemViewController: UIViewController {
     private let diaryItemManager: DiaryItemManager
     private let alertManager = AlertManager()
     weak var alertDelegate: AlertDelegate?
+    private let locationmanager: CLLocationManager = {
+        let manager = CLLocationManager()
+        manager.requestWhenInUseAuthorization()
+        manager.desiredAccuracy = kCLLocationAccuracyReduced
+        return manager
+    }()
     
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
@@ -76,6 +83,8 @@ final class DiaryItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        locationmanager.delegate = self
+        locationmanager.requestLocation()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -262,5 +271,28 @@ extension DiaryItemViewController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         setPlaceholder()
+    }
+}
+
+extension DiaryItemViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let coordinate = locations.last?.coordinate {
+            manager.stopUpdatingLocation()
+            let endpoint = WeatherEndpoint.fetchWeatherInformation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            NetworkManager.publicNetworkManager.getJSONData(endpoint: endpoint, type: WeatherInformation.self) { result in
+                switch result {
+                case .success(let weatherData):
+                    self.diaryItemManager.updateWeatherInformation(weatherState: weatherData.weather.main,
+                                                              iconName: weatherData.weather.icon)
+                    return
+                case .failure(_):
+                    return
+                }
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+//        showErrorAlert(title: "위치 정보 불러오기 실패")
     }
 }
