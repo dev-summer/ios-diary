@@ -9,6 +9,7 @@ import Foundation
 
 enum WeatherEndpoint {
     case fetchWeatherInformation(latitude: Double, longitude: Double, appid: String = "b87014a68c343a8a60a32e16da67aa98")
+    case fetchWeatherIconImage(icon: String)
 }
 
 extension WeatherEndpoint {
@@ -16,17 +17,21 @@ extension WeatherEndpoint {
         switch self {
         case .fetchWeatherInformation:
             return .get
+        case .fetchWeatherIconImage:
+            return .get
         }
     }
     
     var baseURL: String {
-        return "https://api.openweathermap.org/data/2.5"
+        return "https://api.openweathermap.org"
     }
     
     var path: String {
         switch self {
         case.fetchWeatherInformation:
-            return "/weather"
+            return "/data/2.5/weather"
+        case .fetchWeatherIconImage(let icon):
+            return "/img/wn/\(icon)@2x.png"
         }
     }
     
@@ -38,6 +43,8 @@ extension WeatherEndpoint {
             queryParameters.append(URLQueryItem(name: "lon", value: "\(longitude)"))
             queryParameters.append(URLQueryItem(name: "appid", value: "\(appid)"))
             return queryParameters
+        default:
+            return []
         }
     }
     
