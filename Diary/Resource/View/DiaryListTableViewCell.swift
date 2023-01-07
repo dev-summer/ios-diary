@@ -92,6 +92,12 @@ final class DiaryListTableViewCell: UITableViewCell {
         diaryDetailStackView.addArrangedSubview(createdDateLabel)
         diaryDetailStackView.addArrangedSubview(weatherIconImageView)
         diaryDetailStackView.addArrangedSubview(previewLabel)
+        createdDateLabel.setContentHuggingPriority(.required, for: .vertical)
+        
+        NSLayoutConstraint.activate([
+            weatherIconImageView.heightAnchor.constraint(equalTo: createdDateLabel.heightAnchor),
+            weatherIconImageView.widthAnchor.constraint(equalTo: weatherIconImageView.heightAnchor)
+        ])
     }
     
     func updateContent(data: DiaryModel) {
