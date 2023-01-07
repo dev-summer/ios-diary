@@ -47,6 +47,12 @@ final class DiaryListTableViewCell: UITableViewCell {
         return label
     }()
     
+    private let weatherIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        
+        return imageView
+    }()
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -84,6 +90,7 @@ final class DiaryListTableViewCell: UITableViewCell {
     
     private func configureDetailStackView() {
         diaryDetailStackView.addArrangedSubview(createdDateLabel)
+        diaryDetailStackView.addArrangedSubview(weatherIconImageView)
         diaryDetailStackView.addArrangedSubview(previewLabel)
     }
     
@@ -99,5 +106,17 @@ final class DiaryListTableViewCell: UITableViewCell {
         static let contentViewLeadingMargin = CGFloat(16)
         static let contentViewBottomMargin = CGFloat(4)
         static let contentViewTrailingMargin = CGFloat(8)
+    }
+    
+    func configureItemImage(icon: String) {
+        DispatchQueue.global().async {
+            let endpoint = WeatherEndpoint.fetchWeatherIconImage(icon: icon)
+            
+            NetworkManager.publicNetworkManager.getImageData(endpoint: endpoint) { image in
+                DispatchQueue.main.async { [weak self] in
+                    self?.weatherIconImageView.image = image
+                }
+            }
+        }
     }
 }

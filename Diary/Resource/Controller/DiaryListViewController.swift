@@ -25,6 +25,12 @@ final class DiaryListViewController: UIViewController {
         }
     }
     
+    private var weatherData: [WeatherInformation] = [] {
+        didSet {
+            diaryListTableView.reloadData()
+        }
+    }
+    
     override func loadView() {
         view = diaryListTableView
     }
@@ -96,6 +102,7 @@ extension DiaryListViewController: UITableViewDataSource {
         
         cell.updateContent(data: diaryItems[indexPath.row])
         cell.accessoryType = .disclosureIndicator
+        cell.configureItemImage(icon: "10d")
         
         return cell
     }
@@ -153,7 +160,7 @@ extension DiaryListViewController: CLLocationManagerDelegate {
             NetworkManager.publicNetworkManager.getJSONData(endpoint: endpoint, type: WeatherInformation.self) { result in
                 switch result {
                 case .success(let weatherData):
-                    print(weatherData)
+                    self.weatherData.append(weatherData)
                     return
                 case .failure(_):
                     return
