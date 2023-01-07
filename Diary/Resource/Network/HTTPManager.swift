@@ -8,8 +8,13 @@
 import Foundation
 
 final class HTTPManager {
-    func requestToServer(with urlRequest: URLRequest,
-                         completion: @escaping (Result<Data, NetworkError>) -> Void) {
+    func requestGet(endpoint: WeatherEndpoint,
+                    completion: @escaping (Result<Data, NetworkError>) -> Void) {
+        guard let urlRequest = endpoint.createURLRequest() else {
+            completion(.failure(.clientError))
+            return
+        }
+        
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             guard let data = data else {
                 completion(.failure(.clientError))
@@ -31,15 +36,5 @@ final class HTTPManager {
             
             completion(.success(data))
         }.resume()
-    }
-    
-    func requestGet(endpoint: WeatherEndpoint,
-                    completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        guard let urlRequest = endpoint.createURLRequest() else {
-            completion(.failure(.clientError))
-            return
-        }
-        
-        requestToServer(with: urlRequest, completion: completion)
     }
 }
