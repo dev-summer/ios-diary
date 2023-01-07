@@ -5,7 +5,7 @@
 //  Created by SummerCat and som on 2023/01/06.
 //
 
-import Foundation
+import UIKit
 
 struct NetworkManager {
     public static let publicNetworkManager = NetworkManager()
@@ -21,6 +21,28 @@ struct NetworkManager {
                     return
                 }
                 completion(.success(data))
+            case .failure(_):
+                return
+            }
+        }
+    }
+    
+    func getImageData(endpoint: WeatherEndpoint, completion: @escaping (UIImage) -> ()) {
+        let cachedKey = NSString(string: "\(endpoint)")
+        
+        if let cachedImage = ImageCacheManager.shared.object(forKey: cachedKey) {
+            return completion(cachedImage)
+        }
+        
+        HTTPManager().requestGet(endpoint: endpoint) { result in
+            switch result {
+            case .success(let data):
+                guard let image = UIImage(data: data) else {
+                    return
+                }
+                
+                ImageCacheManager.shared.setObject(image, forKey: cachedKey)
+                completion(image)
             case .failure(_):
                 return
             }
