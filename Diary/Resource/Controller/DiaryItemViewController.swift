@@ -55,8 +55,8 @@ final class DiaryItemViewController: UIViewController {
         }
     }
     
-    init(diaryItemManager: DiaryItemManager) {
-        self.diaryItemManager = diaryItemManager
+    init() {
+        self.diaryItemManager = DiaryItemManager()
         do {
             try self.diaryItemManager.create()
         } catch {
@@ -282,8 +282,8 @@ extension DiaryItemViewController: CLLocationManagerDelegate {
             NetworkManager.publicNetworkManager.getJSONData(endpoint: endpoint, type: WeatherInformation.self) { result in
                 switch result {
                 case .success(let weatherData):
-                    self.diaryItemManager.updateWeatherInformation(weatherState: weatherData.weather.main,
-                                                              iconName: weatherData.weather.icon)
+                    self.diaryItemManager.updateWeatherInformation(weatherState: weatherData.weather.first?.main,
+                                                                   iconName: weatherData.weather.first?.icon)
                     return
                 case .failure(_):
                     return

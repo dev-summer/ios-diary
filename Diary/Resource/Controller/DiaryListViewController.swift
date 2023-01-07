@@ -55,7 +55,7 @@ final class DiaryListViewController: UIViewController {
     }
     
     @objc private func tappedPlusButton(_ sender: UIBarButtonItem) {
-        let diaryItemViewController = DiaryItemViewController(diaryItemManager: DiaryItemManager())
+        let diaryItemViewController = DiaryItemViewController()
         navigationController?.pushViewController(diaryItemViewController, animated: true)
     }
     
