@@ -12,6 +12,8 @@ final class DiaryItemManager {
     private var coreDataManager: CoreDataManageable?
     private var objectID: NSManagedObjectID?
     private var hasTitle: Bool = false
+    private var weatherMain: String?
+    private var weatherIcon: String?
     
     init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
         self.coreDataManager = coreDataManager
@@ -29,15 +31,20 @@ final class DiaryItemManager {
     
     func update(title: String?, body: String?) throws {
         if isTitleValid(title) || isBodyValid(body) {
-            try coreDataManager?.update(objectID: objectID, title: title, body: body)
+            try coreDataManager?.update(objectID: objectID, title: title, body: body, weatherMain: weatherMain, weatherIcon: weatherIcon)
         }
     }
     
+    func updateWeatherInformation(weatherState: String?, iconName: String?) {
+        weatherMain = weatherState
+        weatherIcon = iconName
+    }
+
     func validate(title: String?, body: String?) throws {
         if (isTitleValid(title) && isBodyValid(body)) == false {
             try deleteDiary()
         } else {
-            try coreDataManager?.update(objectID: objectID, title: title, body: body)
+            try coreDataManager?.update(objectID: objectID, title: title, body: body, weatherMain: weatherMain, weatherIcon: weatherIcon)
         }
     }
     
@@ -69,7 +76,8 @@ final class DiaryItemManager {
             let diary = DiaryModel(id: result.id ?? UUID(),
                                    title: result.title ?? Namespace.empty,
                                    body: result.body ?? Namespace.empty,
-                                   createdAt: result.createdAt ?? Date())
+                                   createdAt: result.createdAt ?? Date(),
+                                   iconName: result.weatherIcon ?? Namespace.empty)
             diaryItems.append(diary)
         }
         

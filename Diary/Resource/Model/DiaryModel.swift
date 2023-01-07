@@ -13,4 +13,5 @@ struct DiaryModel {
     var title: String
     var body: String
     let createdAt: Date
+    let iconName: String
 }

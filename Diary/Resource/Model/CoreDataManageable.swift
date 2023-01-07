@@ -13,6 +13,6 @@ protocol CoreDataManageable {
     func fetch(with id: NSManagedObjectID?) -> Diary?
     func fetchAllEntities() throws -> [Diary]
     func fetchObjectID(with id: UUID) -> NSManagedObjectID?
-    func update(objectID: NSManagedObjectID?, title: String?, body: String?) throws
+    func update(objectID: NSManagedObjectID?, title: String?, body: String?, weatherMain: String?, weatherIcon: String?) throws
     func delete(with id: NSManagedObjectID?) throws
 }

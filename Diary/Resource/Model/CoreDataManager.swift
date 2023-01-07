@@ -76,13 +76,15 @@ final class CoreDataManager: CoreDataManageable {
         return result?.first?.objectID
     }
     
-    func update(objectID: NSManagedObjectID?, title: String?, body: String?) throws {
+    func update(objectID: NSManagedObjectID?, title: String?, body: String?, weatherMain: String?, weatherIcon: String?) throws {
         guard let objectID = objectID else { return }
         
         guard let object = context.object(with: objectID) as? Diary else { return }
         
         object.setValue(title, forKey: CoreDataNamespace.title)
         object.setValue(body, forKey: CoreDataNamespace.body)
+        object.setValue(weatherMain, forKey: "weatherMain")
+        object.setValue(weatherIcon, forKey: "weatherIcon")
         try saveContext()
     }
     
